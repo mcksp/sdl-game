@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <SDL.h>
 #include "objects.h"
-
+#include "client_udp.h"
 
 int main(){
     SDL_Window *window;
@@ -43,6 +43,9 @@ int main(){
 
     bitmap = SDL_LoadBMP("xd.bmp");
     tex = SDL_CreateTextureFromSurface(renderer, bitmap);
+
+    prepare_client();
+    send_to_server(422.2, 3.2);
 
     while (1) {
         SDL_Event e;

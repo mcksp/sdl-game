@@ -59,4 +59,9 @@ void resolve_keyboard(SDL_Event e, struct Player* player) {
     }
 }
 
+void set_player_pos(struct Player* player, float x, float y) {
+    player->object.position.x = x;
+    player->object.position.y = y;
+}
+
 
