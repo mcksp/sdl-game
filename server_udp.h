@@ -1,5 +1,5 @@
-#ifndef CLIENT_UDP_H
-#define CLIENT_UDP_H
+#ifndef SERVER_DUP_H
+#define SERVER_DUP_H
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -16,8 +16,8 @@
 
 #define SERVER_PORT 1234
 
-void prepare_client();
-void send_to_server(float x, float y);
-void close_client();
+void prepare_server();
+void receive_data();
+void close_server();
 
 #endif
