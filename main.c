@@ -1,24 +1,57 @@
 #include <stdio.h>
 #include <SDL.h>
+#include <pthread.h>
+#include <time.h>
 #include "objects.h"
 #include "client_udp.h"
 #include "server_udp.h"
+#include "network.h"
+
+#define PLAYERS 2
+struct Player players[PLAYERS];
+
+void init_players() {
+    int i;
+    for (i = 0; i < PLAYERS; i++) {
+        players[i].object.position.x = 10 + (60 * i);
+        players[i].object.position.y = 10 + (60 * i);
+        players[i].object.position.w = 10;
+        players[i].object.position.h = 10;
+    }
+}
+void* server_loop(void *arg) {
+    int socket = *((int *) arg);
+    while (1) {
+        receive_data(socket);
+        usleep(50);
+    }
+}
+
+void* client_loop(void *arg) {
+    int socket = *((int *) arg);
+    while (1) {
+        client_listen(socket);
+        usleep(50);
+    }
+}
 
 int main(){
+    struct sockaddr_in server_addr, client_addr;
+    int sock_server, sock_client;
+    server_addr = server_sock_addr();
+    client_addr = client_sock_addr();
+    
+    char menu;
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Surface *bitmap = NULL;
     SDL_Texture *tex = NULL;
-    struct Player player;
-    player.object.position.x = 10;
-    player.object.position.y = 10;
-    player.object.position.w = 10;
-    player.object.position.h = 10;
-    player.left_key = SDLK_LEFT;
-    player.right_key = SDLK_RIGHT;
-    player.up_key = SDLK_UP;
-    player.down_key = SDLK_DOWN;
+    init_players();
+    players[0].left_key = SDLK_LEFT;
+    players[0].right_key = SDLK_RIGHT;
+    players[0].up_key = SDLK_UP;
+    players[0].down_key = SDLK_DOWN;
     window = SDL_CreateWindow(
             "game",
             SDL_WINDOWPOS_UNDEFINED,
@@ -44,25 +77,39 @@ int main(){
 
     bitmap = SDL_LoadBMP("xd.bmp");
     tex = SDL_CreateTextureFromSurface(renderer, bitmap);
-    prepare_server();
-    prepare_client();
-    send_to_server(422.2, 3.2);
-    receive_data();
+    int i;
+    printf("[s]erver or [c]lient?\n");
+    scanf("%c", &menu);
+    pthread_t thread_id_server, thread_id_client;
+    if(menu == 's') {
+        prepare_server(&sock_server, &server_addr);
+        pthread_create(&thread_id_server, NULL, server_loop, &sock_server);
+    }
+    prepare_client(&sock_client, &client_addr);
+    pthread_create(&thread_id_client, NULL, client_loop, &sock_client);
+
     while (1) {
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 break;
             } 
-            resolve_keyboard(e, &player);
+            resolve_keyboard(e, &players[0]);
         }
-        move_player(&player);
+        move_player(&players[0]);
+        send_to_server(sock_client, server_addr, players[0].object.position.x, players[0].object.position.y);
         SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, tex, NULL, &player.object.position);
-        SDL_RenderPresent(renderer);
+        for (i = 0; i < PLAYERS; i++) {
+            SDL_RenderCopy(renderer, tex, NULL, &players[i].object.position);
+        }
+SDL_RenderPresent(renderer);
     }
+   
 
-    close_client();
+    close(sock_client);
+    close(sock_server);
+    pthread_cancel(thread_id_client);
+    pthread_cancel(thread_id_server);
     SDL_DestroyTexture(tex);
     SDL_DestroyRenderer(renderer);
     SDL_FreeSurface(bitmap);

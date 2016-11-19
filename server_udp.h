@@ -16,8 +16,7 @@
 
 #define SERVER_PORT 1234
 
-void prepare_server();
-void receive_data();
-void close_server();
+void prepare_server(int *sock, struct sockaddr_in *server_sock);
+void receive_data(int sock);
 
 #endif
