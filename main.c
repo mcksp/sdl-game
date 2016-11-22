@@ -28,7 +28,18 @@ void init_players() {
     }
 }
 
+void receive_new_id(int id) {
+    my_id = id;
+    number_of_players = id;
+    printf("my_id is now: %d\n", my_id);
+}
 
+void check_if_its_new_player(int id){
+    if (id > number_of_players) {
+        number_of_players = id;
+        printf("new max player, now %d\n", number_of_players + 1);
+    }
+}
 
 
 void* client_loop(void *arg) {
@@ -37,17 +48,12 @@ void* client_loop(void *arg) {
         int id, x, y;
         client_listen(socket, &id, &x, &y);
         if (id == -1) {
-            my_id = x;
-            number_of_players = x;
-            printf("my_id is now: %d\n", my_id);
+            receive_new_id(x);
         }
         if (id >= 0) {
+            check_if_its_new_player(id);
             players[id].object.position.x = x;
             players[id].object.position.y = y;
-            if (id > number_of_players) {
-                number_of_players = id;
-                printf("new max player, now %d\n", number_of_players + 1);
-            }
         }
         usleep(50);
     }
