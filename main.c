@@ -11,10 +11,7 @@
 #define MAX_PLAYERS 10
 
 struct Player players[MAX_PLAYERS];
-struct Player players_server[MAX_PLAYERS];
-int number_of_connected_clients = 0;
 int number_of_players = 0;
-struct sockaddr_in clients_addresses[MAX_PLAYERS];
 int16_t my_id = -1;
 
 void init_players() {
@@ -33,52 +30,6 @@ void init_players() {
 
 
 
-void* server_receive_loop(void *arg) {
-    int socket = *((int *) arg);
-    int client_pos = 0;
-    struct sockaddr_in client_addr;
-    int16_t tab[3];
-
-    while (1) {
-        client_addr = receive_data(socket, tab);
-
-        client_pos = addr_pos_in_tab(client_addr, clients_addresses, number_of_connected_clients);
-        if (client_pos < number_of_connected_clients && client_pos >= 0) {
-            players_server[client_pos].object.position.x = tab[1];
-            players_server[client_pos].object.position.y = tab[2];
-        }
-        if (client_pos >= number_of_connected_clients && client_pos < MAX_PLAYERS) {
-            clients_addresses[number_of_connected_clients++] = client_addr;
-        }
-        if (tab[0] == -1) {
-            printf("client_pos when -1 in server_receive %d\n", client_pos);
-            int16_t tab[3];
-            tab[0] = -1;
-            tab[1] = client_pos;
-            send_data(socket, clients_addresses[client_pos], tab);
-        }
-        usleep(50);
-    }
-}
-
-void* server_send_loop(void *arg) {
-    int socket = *((int *) arg);
-    int16_t tab[3];
-    while (1) {
-        int i, j;
-        for (i = 0; i < number_of_connected_clients; i++) {
-            for (j = 0; j < number_of_connected_clients; j++) {
-                if (i != j) {
-                    tab[0] = j;
-                    tab[1] = players_server[j].object.position.x;
-                    tab[2] = players_server[j].object.position.y;
-                    send_data(socket, clients_addresses[i], tab);
-                }
-            }
-        }
-        usleep(100);
-    }
-}
 
 void* client_loop(void *arg) {
     int socket = *((int *) arg);
@@ -103,7 +54,6 @@ void* client_loop(void *arg) {
 }
 
 int main(){
-    memset(clients_addresses, 0, sizeof(struct sockaddr_in) * MAX_PLAYERS);
     struct sockaddr_in server_addr, client_addr;
     int sock_server, sock_client;
     server_addr = server_sock_addr();

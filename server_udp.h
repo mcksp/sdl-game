@@ -19,5 +19,9 @@
 void prepare_server(int *sock, struct sockaddr_in *server_sock);
 struct sockaddr_in receive_data(int sock, int16_t data[]);
 void send_data(int sock, struct sockaddr_in client, int16_t tab[]);
+void* server_receive_loop(void *arg);
+void* server_send_loop(void *arg);
+int its_an_old_client(int client_pos);
+void add_adr_to_list(int client_pos, struct sockaddr_in *client_addr);
 
 #endif
