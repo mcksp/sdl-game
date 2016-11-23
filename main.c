@@ -109,22 +109,21 @@ int main(){
     prepare_client(&sock_client, &client_addr);
     pthread_create(&thread_id_client, NULL, client_loop, &sock_client);
 
+    while (my_id < 0) {
+        send_to_server(sock_client, server_addr, my_id, 0, 0);
+        usleep(100);
+    }
+
     while (1) {
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 break;
             }
-            if (my_id >= 0) {
-                resolve_keyboard(e, &players[my_id]);
-            }
+            resolve_keyboard(e, &players[my_id]);
         }
-        if (my_id >= 0) {
-            move_player(&players[my_id]);
-            send_to_server(sock_client, server_addr, my_id, players[my_id].object.position.x, players[my_id].object.position.y);
-        } else {
-            send_to_server(sock_client, server_addr, my_id, 0, 0);
-        }
+        move_player(&players[my_id]);
+        send_to_server(sock_client, server_addr, my_id, players[my_id].object.position.x, players[my_id].object.position.y);
 
         SDL_RenderClear(renderer);
         for (i = 0; i <= number_of_players; i++) {
