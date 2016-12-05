@@ -41,8 +41,8 @@ void* server_receive_loop(void *arg) {
         client_addr = receive_data(socket, tab);
         client_pos = addr_pos_in_tab(client_addr, clients_addresses, number_of_connected_clients);
         if (its_an_old_client(client_pos)) {
-            players_server[client_pos].object.position.x = tab[1];
-            players_server[client_pos].object.position.y = tab[2];
+            players_server[client_pos].position.x = tab[1];
+            players_server[client_pos].position.y = tab[2];
         }
         if (tab[0] == -1 && client_pos < MAX_PLAYERS) {
             add_adr_to_list(client_pos, &client_addr);
@@ -64,8 +64,8 @@ void* server_send_loop(void *arg) {
             for (j = 0; j < number_of_connected_clients; j++) {
                 if (i != j) {
                     tab[0] = j;
-                    tab[1] = players_server[j].object.position.x;
-                    tab[2] = players_server[j].object.position.y;
+                    tab[1] = players_server[j].position.x;
+                    tab[2] = players_server[j].position.y;
                     send_data(socket, clients_addresses[i], tab);
                 }
             }

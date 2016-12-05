@@ -2,6 +2,8 @@
 
 #define TILE_SIZE 32
 #define STEP 4
+#define X_AXIS 1
+#define Y_AXIS 0
 
 struct point {
     int x;
@@ -25,37 +27,77 @@ int map[15][20] = {
     {0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
 
-void move_and_check_colissions(struct Player *player) {
+int sign(int a) {
+    if (a < 0) {
+        return -1;
+    } else if (a > 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+void decrement_abs(int *a) {
+    *a -= sign(*a);
+}
+
+int move_and_check_collisions(struct Player *player, int axis, int mov) {
+    SDL_Rect pos = player->position;
+
+    if (axis == X_AXIS) {
+        pos.x += sign(mov);
+    }
+
+    if (axis == Y_AXIS) {
+        pos.y += sign(mov);
+    }
+
+    if (map[pos.y/TILE_SIZE][pos.x/TILE_SIZE] ||
+            map[(pos.y + pos.h)/TILE_SIZE][pos.x/TILE_SIZE] ||
+            map[(pos.y)/TILE_SIZE][(pos.x + pos.w)/TILE_SIZE] ||
+            map[(pos.y + pos.h)/TILE_SIZE][(pos.x + pos.w)/TILE_SIZE]) {
+        return 0;
+    } else {
+        player->position = pos;
+        return 1;
+    }
+}
+        
+
+void move_player(struct Player *player) {
+    int x_movement = 0;
+    int y_movement = 0;
     if (player->left) {
-        player->object.position.x -= STEP;
+        x_movement -= STEP;
     }
     if (player->right) {
-        player->object.position.x += STEP;
+        x_movement += STEP;
     }
     if (player->up) {
         if (player->in_air == 0) {
             player->in_air = 18;
         }
     }
+
     if (player->in_air > 0) {
-        player->object.position.y -= STEP;
+        y_movement -= STEP;
         player->in_air -= 1;
     } else {
-        player->object.position.y += STEP;
+        y_movement += STEP;
     }
 
-    struct point left_down, left_up, right_down, right_up;
-    int x, y, w, h;
-    x = player->object.position.x;
-    y = player->object.position.y;
-    w = player->object.position.w;
-    h = player->object.position.h;
-    left_down.y = right_down.y = y + h;
-    left_down.x = left_up.x = x;
-    right_down.x = right_up.x = x + w;
-    right_up.y = left_up.y = y;
-    if (map[left_down.y/TILE_SIZE][left_down.x/TILE_SIZE]) {
-        player->object.position.y -= (player->object.position.y + w) % TILE_SIZE;
+    while (x_movement != 0 || y_movement != 0) {
+        if (x_movement != 0 && move_and_check_collisions(player, X_AXIS, x_movement)) {
+            decrement_abs(&x_movement);
+        } else {
+            x_movement = 0;
+        }
+
+        if (y_movement != 0 && move_and_check_collisions(player, Y_AXIS, y_movement)) {
+            decrement_abs(&y_movement);
+        } else {
+            y_movement = 0;
+        }
     }
 }
 

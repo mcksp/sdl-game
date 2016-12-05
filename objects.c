@@ -36,10 +36,6 @@ void resolve_player_key_up(int key, struct Player* player) {
 }
 
 
-void move_player(struct Player* player) {
-    move_and_check_colissions(player);
-}
-
 void resolve_keyboard(SDL_Event e, struct Player* player) {
     if (e.type == SDL_KEYDOWN) {
         resolve_player_key_down(e.key.keysym.sym, player);
@@ -50,8 +46,8 @@ void resolve_keyboard(SDL_Event e, struct Player* player) {
 }
 
 void set_player_pos(struct Player* player, float x, float y) {
-    player->object.position.x = x;
-    player->object.position.y = y;
+    player->position.x = x;
+    player->position.y = y;
 }
 
 

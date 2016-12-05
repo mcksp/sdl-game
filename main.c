@@ -18,10 +18,10 @@ int16_t my_id = -1;
 void init_players() {
     int i;
     for (i = 0; i < MAX_PLAYERS; i++) {
-        players[i].object.position.x = 10 + (60 * i);
-        players[i].object.position.y = 10 + (60 * i);
-        players[i].object.position.w = 10;
-        players[i].object.position.h = 10;
+        players[i].position.x = 10 + (60 * i);
+        players[i].position.y = 10 + (60 * i);
+        players[i].position.w = 10;
+        players[i].position.h = 10;
         players[i].left_key = SDLK_LEFT;
         players[i].right_key = SDLK_RIGHT;
         players[i].up_key = SDLK_UP;
@@ -54,8 +54,8 @@ void* client_loop(void *arg) {
         }
         if (id >= 0) {
             check_if_its_new_player(id);
-            players[id].object.position.x = x;
-            players[id].object.position.y = y;
+            players[id].position.x = x;
+            players[id].position.y = y;
         }
         usleep(50);
     }
@@ -127,12 +127,12 @@ int main(){
             resolve_keyboard(e, &players[my_id]);
         }
         move_player(&players[my_id]);
-        send_to_server(sock_client, server_addr, my_id, players[my_id].object.position.x, players[my_id].object.position.y);
+        send_to_server(sock_client, server_addr, my_id, players[my_id].position.x, players[my_id].position.y);
 
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, level, NULL, NULL);
         for (i = 0; i <= number_of_players; i++) {
-            SDL_RenderCopy(renderer, tex, NULL, &players[i].object.position);
+            SDL_RenderCopy(renderer, tex, NULL, &players[i].position);
         }
         SDL_RenderPresent(renderer);
     }
