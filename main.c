@@ -7,6 +7,7 @@
 #include "client_udp.h"
 #include "server_udp.h"
 #include "network.h"
+#include "physic.h"
 
 #define MAX_PLAYERS 10
 
@@ -19,12 +20,13 @@ void init_players() {
     for (i = 0; i < MAX_PLAYERS; i++) {
         players[i].object.position.x = 10 + (60 * i);
         players[i].object.position.y = 10 + (60 * i);
-        players[i].object.position.w = 10 * (i + 1);
-        players[i].object.position.h = 10 * (i + 1);
+        players[i].object.position.w = 10;
+        players[i].object.position.h = 10;
         players[i].left_key = SDLK_LEFT;
         players[i].right_key = SDLK_RIGHT;
         players[i].up_key = SDLK_UP;
         players[i].down_key = SDLK_DOWN;
+        players[i].in_air = 0;
     }
 }
 
@@ -71,6 +73,7 @@ int main(){
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Surface *bitmap = NULL;
     SDL_Texture *tex = NULL;
+    SDL_Texture *level = NULL;
     init_players();
     window = SDL_CreateWindow(
             "game",
@@ -94,7 +97,8 @@ int main(){
         SDL_Quit();
         return 1;
     }
-
+    
+    level = get_level_texture(renderer);
     bitmap = SDL_LoadBMP("xd.bmp");
     tex = SDL_CreateTextureFromSurface(renderer, bitmap);
     int i;
@@ -126,6 +130,7 @@ int main(){
         send_to_server(sock_client, server_addr, my_id, players[my_id].object.position.x, players[my_id].object.position.y);
 
         SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, level, NULL, NULL);
         for (i = 0; i <= number_of_players; i++) {
             SDL_RenderCopy(renderer, tex, NULL, &players[i].object.position);
         }

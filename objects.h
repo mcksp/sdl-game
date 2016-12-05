@@ -12,6 +12,7 @@ struct Object {
 struct Player {
     struct Object object;
     int left, right, up, down;
+    int in_air;
     int left_key, right_key, up_key, down_key;
 };
 

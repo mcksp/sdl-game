@@ -1,4 +1,5 @@
 #include "objects.h"
+#include "physic.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -36,18 +37,7 @@ void resolve_player_key_up(int key, struct Player* player) {
 
 
 void move_player(struct Player* player) {
-    if(player->left) {
-        player->object.position.x -= STEP;
-    }
-    if(player->right) {
-        player->object.position.x += STEP;
-    }
-    if(player->up) {
-        player->object.position.y -= STEP;
-    }   
-    if(player->down) {
-        player->object.position.y += STEP;
-    }
+    move_and_check_colissions(player);
 }
 
 void resolve_keyboard(SDL_Event e, struct Player* player) {
