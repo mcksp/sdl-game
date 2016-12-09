@@ -104,7 +104,6 @@ void move_player(struct Player *player) {
             if(y_movement < 0) {
                 player->y_speed = 0;
             }
-            printf("eloo %d\n", player->y_speed);
             y_movement = 0;
         }
     }
