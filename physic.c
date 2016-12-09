@@ -42,24 +42,24 @@ void decrement_abs(int *a) {
     *a -= sign(*a);
 }
 
-int move_and_check_collisions(struct Player *player, int axis, int mov) {
-    SDL_Rect pos = player->position;
+int move_and_check_collisions(SDL_Rect *position, int axis, int mov) {
+    SDL_Rect temp = *position;
 
     if (axis == X_AXIS) {
-        pos.x += sign(mov);
+        temp.x += sign(mov);
     }
 
     if (axis == Y_AXIS) {
-        pos.y += sign(mov);
+        temp.y += sign(mov);
     }
 
-    if (map[pos.y/TILE_SIZE][pos.x/TILE_SIZE] ||
-            map[(pos.y + pos.h)/TILE_SIZE][pos.x/TILE_SIZE] ||
-            map[(pos.y)/TILE_SIZE][(pos.x + pos.w)/TILE_SIZE] ||
-            map[(pos.y + pos.h)/TILE_SIZE][(pos.x + pos.w)/TILE_SIZE]) {
+    if (map[temp.y/TILE_SIZE][temp.x/TILE_SIZE] ||
+            map[(temp.y + temp.h)/TILE_SIZE][temp.x/TILE_SIZE] ||
+            map[(temp.y)/TILE_SIZE][(temp.x + temp.w)/TILE_SIZE] ||
+            map[(temp.y + temp.h)/TILE_SIZE][(temp.x + temp.w)/TILE_SIZE]) {
         return 0;
     } else {
-        player->position = pos;
+        *position = temp;
         return 1;
     }
 }
@@ -77,23 +77,23 @@ void move_player(struct Player *player) {
     if (player->up) {
         if (player->can_jump) {
             player->can_jump = 0;
-            player->y_speed = -23;
+            player->y_speed = -25;
         }
     }
     
-    y_movement = player->y_speed / 2;
+    y_movement = player->y_speed / 3;
     if (player->y_speed < 25) {
         player->y_speed += GRAVITY;
     }
 
     while (x_movement != 0 || y_movement != 0) {
-        if (x_movement != 0 && move_and_check_collisions(player, X_AXIS, x_movement)) {
+        if (x_movement != 0 && move_and_check_collisions(&player->position, X_AXIS, x_movement)) {
             decrement_abs(&x_movement);
         } else {
             x_movement = 0;
         }
 
-        if (y_movement != 0 && move_and_check_collisions(player, Y_AXIS, y_movement)) {
+        if (y_movement != 0 && move_and_check_collisions(&player->position, Y_AXIS, y_movement)) {
             decrement_abs(&y_movement);
             player->can_jump = 0;
         } else {
@@ -109,17 +109,17 @@ void move_player(struct Player *player) {
     }
 }
 
-SDL_Texture* get_level_texture(SDL_Renderer *renderer) {
+SDL_Texture* get_map_texture(SDL_Renderer *renderer) {
     SDL_Surface *bitmap = NULL;
-    SDL_Texture *level;
+    SDL_Texture *map_texture;
     SDL_Rect rect;
     rect.w = 32;
     rect.h = 32;
     bitmap = SDL_LoadBMP("tile.bmp");
     SDL_Texture *tex = NULL;
     tex = SDL_CreateTextureFromSurface(renderer, bitmap);
-    level = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 480);
-    SDL_SetRenderTarget(renderer, level);
+    map_texture = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 480);
+    SDL_SetRenderTarget(renderer, map_texture);
     int i, j;
     for (i = 0; i < 480 / TILE_SIZE; i++) {
         for (j = 0; j < 640 / TILE_SIZE; j++) {
@@ -131,7 +131,7 @@ SDL_Texture* get_level_texture(SDL_Renderer *renderer) {
         }
     }
     SDL_SetRenderTarget(renderer, NULL);
-    return level;
+    return map_texture;
 }
     
 

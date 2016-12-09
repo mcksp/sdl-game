@@ -8,7 +8,8 @@ struct Player {
     SDL_Texture *texture;
     int left, right, up, down;
     int can_jump, y_speed;
-    int left_key, right_key, up_key, down_key;
+    int face;
+    int left_key, right_key, up_key, down_key, attack_key;
 };
 
 void resolve_player_key_up(int key, struct Player* player);

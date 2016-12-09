@@ -15,6 +15,16 @@ struct Player players[MAX_PLAYERS];
 int number_of_players = 0;
 int16_t my_id = -1;
 
+SDL_Texture* load_texture(SDL_Renderer *renderer, char file[]) {
+    SDL_Surface *bitmap = NULL;
+    SDL_Texture *texture = NULL;
+    bitmap = SDL_LoadBMP(file);
+    texture = SDL_CreateTextureFromSurface(renderer, bitmap);
+    SDL_FreeSurface(bitmap);
+    return texture;
+}
+
+
 void init_players() {
     int i;
     for (i = 0; i < MAX_PLAYERS; i++) {
@@ -26,6 +36,8 @@ void init_players() {
         players[i].right_key = SDLK_RIGHT;
         players[i].up_key = SDLK_UP;
         players[i].down_key = SDLK_DOWN;
+        players[i].attack_key = SDLK_z;
+        players[i].face = 1;
         players[i].y_speed = 0;
         players[i].can_jump = 0;
     }
@@ -72,9 +84,9 @@ int main(){
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Init(SDL_INIT_VIDEO);
-    SDL_Surface *bitmap = NULL;
     SDL_Texture *tex = NULL;
-    SDL_Texture *level = NULL;
+    SDL_Texture *arrow = NULL;
+    SDL_Texture *map = NULL;
     init_players();
     window = SDL_CreateWindow(
             "game",
@@ -98,10 +110,9 @@ int main(){
         SDL_Quit();
         return 1;
     }
-    
-    level = get_level_texture(renderer);
-    bitmap = SDL_LoadBMP("xd.bmp");
-    tex = SDL_CreateTextureFromSurface(renderer, bitmap);
+    map = get_map_texture(renderer);
+    tex = load_texture(renderer, "xd.bmp");
+    arrow = load_texture(renderer, "arrow.bmp");
     int i;
     printf("[s]erver or [c]lient?\n");
     scanf("%c", &menu);
@@ -131,7 +142,7 @@ int main(){
         send_to_server(sock_client, server_addr, my_id, players[my_id].position.x, players[my_id].position.y);
 
         SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, level, NULL, NULL);
+        SDL_RenderCopy(renderer, map, NULL, NULL);
         for (i = 0; i <= number_of_players; i++) {
             SDL_RenderCopy(renderer, tex, NULL, &players[i].position);
         }
@@ -145,8 +156,9 @@ int main(){
     pthread_cancel(thread_id_server);
     pthread_cancel(thread_id_server_send);
     SDL_DestroyTexture(tex);
+    SDL_DestroyTexture(arrow);
+    SDL_DestroyTexture(map);
     SDL_DestroyRenderer(renderer);
-    SDL_FreeSurface(bitmap);
     SDL_DestroyWindow(window);
     SDL_Quit();
     return 0;

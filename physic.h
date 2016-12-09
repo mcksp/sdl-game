@@ -5,5 +5,5 @@
 #include "objects.h"
 
 void move_player(struct Player *player); 
-SDL_Texture* get_level_texture(SDL_Renderer *renderer);
+SDL_Texture* get_map_texture(SDL_Renderer *renderer);
 #endif
