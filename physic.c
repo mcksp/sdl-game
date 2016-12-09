@@ -2,6 +2,7 @@
 
 #define TILE_SIZE 32
 #define STEP 4
+#define GRAVITY 1
 #define X_AXIS 1
 #define Y_AXIS 0
 
@@ -74,16 +75,15 @@ void move_player(struct Player *player) {
         x_movement += STEP;
     }
     if (player->up) {
-        if (player->in_air == 0) {
-            player->in_air = 18;
+        if (player->can_jump) {
+            player->can_jump = 0;
+            player->y_speed = -23;
         }
     }
-
-    if (player->in_air > 0) {
-        y_movement -= STEP;
-        player->in_air -= 1;
-    } else {
-        y_movement += STEP;
+    
+    y_movement = player->y_speed / 2;
+    if (player->y_speed < 25) {
+        player->y_speed += GRAVITY;
     }
 
     while (x_movement != 0 || y_movement != 0) {
@@ -95,7 +95,16 @@ void move_player(struct Player *player) {
 
         if (y_movement != 0 && move_and_check_collisions(player, Y_AXIS, y_movement)) {
             decrement_abs(&y_movement);
+            player->can_jump = 0;
         } else {
+            if(y_movement > 0) {
+                player->can_jump = 1;
+                player->y_speed = 0;
+            }
+            if(y_movement < 0) {
+                player->y_speed = 0;
+            }
+            printf("eloo %d\n", player->y_speed);
             y_movement = 0;
         }
     }

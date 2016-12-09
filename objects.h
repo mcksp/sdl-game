@@ -7,7 +7,7 @@ struct Player {
     SDL_Rect position;
     SDL_Texture *texture;
     int left, right, up, down;
-    int in_air;
+    int can_jump, y_speed;
     int left_key, right_key, up_key, down_key;
 };
 

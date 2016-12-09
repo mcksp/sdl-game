@@ -26,7 +26,8 @@ void init_players() {
         players[i].right_key = SDLK_RIGHT;
         players[i].up_key = SDLK_UP;
         players[i].down_key = SDLK_DOWN;
-        players[i].in_air = 0;
+        players[i].y_speed = 0;
+        players[i].can_jump = 0;
     }
 }
 
