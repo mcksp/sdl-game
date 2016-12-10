@@ -68,9 +68,11 @@ void* server_send_loop(void *arg) {
                     tab[2] = players_server[j].position.y;
                     send_data(socket, clients_addresses[i], tab);
                 }
+                usleep(2);
             }
+            usleep(2);
         }
-        usleep(50);
+        usleep(10);
     }
 }
 

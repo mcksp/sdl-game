@@ -28,8 +28,8 @@ SDL_Texture* load_texture(SDL_Renderer *renderer, char file[]) {
 void init_players() {
     int i;
     for (i = 0; i < MAX_PLAYERS; i++) {
-        players[i].position.x = 10 + (60 * i);
-        players[i].position.y = 10 + (60 * i);
+        players[i].position.x = 10;
+        players[i].position.y = 10;
         players[i].position.w = 10;
         players[i].position.h = 10;
         players[i].left_key = SDLK_LEFT;
@@ -140,7 +140,7 @@ int main(){
         }
         move_player(&players[my_id]);
         send_to_server(sock_client, server_addr, my_id, players[my_id].position.x, players[my_id].position.y);
-
+        usleep(30);
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, map, NULL, NULL);
         for (i = 0; i <= number_of_players; i++) {
