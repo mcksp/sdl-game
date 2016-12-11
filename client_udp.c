@@ -11,13 +11,14 @@ void prepare_client(int *sock, struct sockaddr_in *client_addr) {
     }
 }
 
-void send_to_server(int sock, struct sockaddr_in serv_addr, int16_t id, float x, float y) {
-    int16_t tab[3];
+void send_to_server(int sock, struct sockaddr_in serv_addr, int16_t id, float x, float y, int16_t shoot) {
+    int16_t tab[4];
     tab[0] = id;
     tab[1] = (int16_t) x;
     tab[2] = (int16_t) y;
+    tab[3] = shoot;
     socklen_t serv_addr_size = sizeof(struct sockaddr);
-    if (sendto(sock, tab, sizeof(int16_t) * 3 + 1, 0,
+    if (sendto(sock, tab, sizeof(int16_t) * 4, 0,
             (struct sockaddr *) &serv_addr, serv_addr_size) < 0) {
         perror("sendto error");
     }

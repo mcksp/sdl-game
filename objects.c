@@ -3,7 +3,6 @@
 
 #define TRUE 1
 #define FALSE 0
-#define STEP 4
 
 void resolve_player_key_down(int key, struct Player* player) {
     if (key == player->left_key) {
@@ -17,6 +16,9 @@ void resolve_player_key_down(int key, struct Player* player) {
     }
     if (key == player->down_key) {
         player->down = TRUE;
+    }
+    if (key == player->attack_key) {
+        player->shoot = TRUE;
     }
 }
 
@@ -32,6 +34,9 @@ void resolve_player_key_up(int key, struct Player* player) {
     }
     if (key == player->down_key) {
         player->down = FALSE;
+    }
+    if (key == player->attack_key) {
+        player->shoot = FALSE;
     }
 }
 

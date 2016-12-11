@@ -46,14 +46,15 @@ void init_players() {
     for (i = 0; i < MAX_PLAYERS; i++) {
         players[i].position.x = 10;
         players[i].position.y = 10;
-        players[i].position.w = 10;
-        players[i].position.h = 10;
+        players[i].position.w = 16;
+        players[i].position.h = 16;
         players[i].left_key = SDLK_LEFT;
         players[i].right_key = SDLK_RIGHT;
         players[i].up_key = SDLK_UP;
         players[i].down_key = SDLK_DOWN;
         players[i].attack_key = SDLK_z;
         players[i].face = 1;
+        players[i].shoot = 0;
         players[i].y_speed = 0;
         players[i].can_jump = 0;
     }
@@ -145,7 +146,7 @@ int main(){
     pthread_create(&thread_id_client, NULL, client_loop, &sock_client);
 
     while (my_id < 0) {
-        send_to_server(sock_client, server_addr, my_id, 0, 0);
+        send_to_server(sock_client, server_addr, my_id, 0, 0, 0);
         usleep(100);
     }
 
@@ -158,7 +159,7 @@ int main(){
             resolve_keyboard(e, &players[my_id]);
         }
         move_player(&players[my_id]);
-        send_to_server(sock_client, server_addr, my_id, players[my_id].position.x, players[my_id].position.y);
+        send_to_server(sock_client, server_addr, my_id, players[my_id].position.x, players[my_id].position.y, players[my_id].shoot);
         usleep(30);
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, map, NULL, NULL);

@@ -17,7 +17,7 @@
 #define SERVER_PORT 1234
 
 void prepare_client(int *sock, struct sockaddr_in *client_addr);
-void send_to_server(int sock, struct sockaddr_in serv_addr, int16_t id, float x, float y);
+void send_to_server(int sock, struct sockaddr_in serv_addr, int16_t id, float x, float y, int16_t shoot);
 void client_listen(int sock, int *id, int *x, int *y);
 
 #endif

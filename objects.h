@@ -8,7 +8,7 @@ struct Player {
     SDL_Texture *texture;
     int left, right, up, down;
     int can_jump, y_speed;
-    int face;
+    int face, shoot;
     int left_key, right_key, up_key, down_key, attack_key;
 };
 

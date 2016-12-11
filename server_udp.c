@@ -21,7 +21,7 @@ void prepare_server(int *sock, struct sockaddr_in *server_sock) {
 struct sockaddr_in receive_data(int sock, int16_t data[]) {
     struct sockaddr_in addr;
     socklen_t addr_size = sizeof(struct sockaddr);
-    recvfrom(sock, data, sizeof(int16_t) * 3 + 1, 0, (struct sockaddr*)&addr, &addr_size);
+    recvfrom(sock, data, sizeof(int16_t) * 4, 0, (struct sockaddr*)&addr, &addr_size);
     return addr;
 }
 
@@ -35,7 +35,7 @@ void* server_receive_loop(void *arg) {
     int socket = *((int *) arg);
     int client_pos = 0;
     struct sockaddr_in client_addr;
-    int16_t tab[3];
+    int16_t tab[4];
 
     while (1) {
         client_addr = receive_data(socket, tab);
@@ -50,6 +50,9 @@ void* server_receive_loop(void *arg) {
             tab[0] = -1;
             tab[1] = client_pos;
             send_data(socket, clients_addresses[client_pos], tab);
+        }
+        if (tab[3] != 0) {
+            printf("%d shoot!\n", tab[0]);
         }
         usleep(50);
     }
