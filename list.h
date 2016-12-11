@@ -8,7 +8,7 @@ struct node {
     struct node *next;
 };
 
-void push(struct node **head, void *new_data, size_t data_size);
-void erase(struct node **head, int n);
+void push_element(struct node **head, void *new_data, size_t data_size);
+void erase_element(struct node **head, int n);
 
 #endif

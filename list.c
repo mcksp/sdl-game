@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-void push(struct node **head, void *data, size_t data_size) {
+void push_element(struct node **head, void *data, size_t data_size) {
     struct node* new_node = malloc(sizeof(struct node));
     new_node->data = malloc(data_size);
     new_node->next = *head;
@@ -10,7 +10,7 @@ void push(struct node **head, void *data, size_t data_size) {
     *head = new_node;
 }
 
-void erase(struct node **head, int n) {
+void erase_element(struct node **head, int n) {
     int i;
     struct node *tmp = *head;
     if (n == 0) {

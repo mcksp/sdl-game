@@ -63,7 +63,16 @@ int move_and_check_collisions(SDL_Rect *position, int axis, int mov) {
         return 1;
     }
 }
-        
+ 
+void move_bullets(struct node *bullets) {
+    struct node *next = bullets;
+    struct Bullet *b;
+    while (next != NULL) {
+        b = (struct Bullet*) next->data;
+        b->position.x += b->face;
+        next = next->next;
+    }
+}
 
 void move_player(struct Player *player) {
     int x_movement = 0;
