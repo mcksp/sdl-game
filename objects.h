@@ -12,9 +12,15 @@ struct Player {
     int left_key, right_key, up_key, down_key, attack_key;
 };
 
+struct Bullet {
+    SDL_Rect position;
+    int face;
+};
+
+
 void resolve_player_key_up(int key, struct Player* player);
 void resolve_player_key_down(int key, struct Player* player);
 void resolve_keyboard(SDL_Event e, struct Player* player);
 void set_player_pos(struct Player* player, float x, float y);
-
+struct Bullet init_bullet(int x, int y, int face);
 #endif

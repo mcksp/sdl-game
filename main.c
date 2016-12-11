@@ -16,7 +16,7 @@ struct Player players[MAX_PLAYERS];
 int number_of_players = 0;
 int16_t my_id = -1;
 
-SDL_Texture* load_texture(SDL_Renderer *renderer, char file[]) {
+SDL_Texture* load_texture(SDL_Renderer *renderer, char *file) {
     SDL_Surface *bitmap = NULL;
     SDL_Texture *texture = NULL;
     bitmap = SDL_LoadBMP(file);
@@ -97,7 +97,7 @@ int main(){
     server_addr = server_sock_addr();
     client_addr = client_sock_addr();
     
-    char menu;
+    char menu = 's';
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Init(SDL_INIT_VIDEO);
@@ -135,7 +135,7 @@ int main(){
     arrow = load_texture(renderer, "arrow.bmp");
     int i;
     printf("[s]erver or [c]lient?\n");
-    scanf("%c", &menu);
+    //scanf("%c", &menu);
     pthread_t thread_id_server, thread_id_client, thread_id_server_send;
     if(menu == 's') {
         prepare_server(&sock_server, &server_addr);

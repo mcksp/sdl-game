@@ -3,6 +3,7 @@
 
 #define TRUE 1
 #define FALSE 0
+#define BULLET_SIZE 8
 
 void resolve_player_key_down(int key, struct Player* player) {
     if (key == player->left_key) {
@@ -18,7 +19,7 @@ void resolve_player_key_down(int key, struct Player* player) {
         player->down = TRUE;
     }
     if (key == player->attack_key) {
-        player->shoot = TRUE;
+        player->shoot = player->face;
     }
 }
 
@@ -55,4 +56,12 @@ void set_player_pos(struct Player* player, float x, float y) {
     player->position.y = y;
 }
 
-
+struct Bullet init_bullet(int x, int y, int face) {
+    struct Bullet b;
+    b.position.x = x;
+    b.position.y = y;
+    b.position.w = BULLET_SIZE;
+    b.position.h = BULLET_SIZE;
+    b.face = face;
+    return b;
+}

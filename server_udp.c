@@ -3,6 +3,7 @@
 #include "objects.h"
 
 #define MAX_PLAYERS 10
+#define MAX_BULLETS 100
 
 struct sockaddr_in clients_addresses[MAX_PLAYERS];
 struct Player players_server[MAX_PLAYERS];
@@ -27,7 +28,7 @@ struct sockaddr_in receive_data(int sock, int16_t data[]) {
 
 void send_data(int sock, struct sockaddr_in client, int16_t data[]) {
     socklen_t addr_size = sizeof(struct sockaddr);
-    sendto(sock, data, sizeof(int16_t) * 3 + 1, 0, (struct sockaddr*)&client, addr_size);
+    sendto(sock, data, sizeof(int16_t) * 3, 0, (struct sockaddr*)&client, addr_size);
 }
 
 
@@ -43,6 +44,10 @@ void* server_receive_loop(void *arg) {
         if (its_an_old_client(client_pos)) {
             players_server[client_pos].position.x = tab[1];
             players_server[client_pos].position.y = tab[2];
+            if (players_server[client_pos].shoot == 0 && tab[3] != 0) {
+                printf("%d shoot\n %d", tab[0], tab[3]);
+            }
+            players_server[client_pos].shoot = tab[3]; 
         }
         if (tab[0] == -1 && client_pos < MAX_PLAYERS) {
             add_adr_to_list(client_pos, &client_addr);
@@ -50,9 +55,6 @@ void* server_receive_loop(void *arg) {
             tab[0] = -1;
             tab[1] = client_pos;
             send_data(socket, clients_addresses[client_pos], tab);
-        }
-        if (tab[3] != 0) {
-            printf("%d shoot!\n", tab[0]);
         }
         usleep(50);
     }
