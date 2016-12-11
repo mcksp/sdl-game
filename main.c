@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <pthread.h>
 #include <time.h>
 #include <stdint.h>
@@ -22,6 +23,21 @@ SDL_Texture* load_texture(SDL_Renderer *renderer, char file[]) {
     texture = SDL_CreateTextureFromSurface(renderer, bitmap);
     SDL_FreeSurface(bitmap);
     return texture;
+}
+
+void disp_text(SDL_Renderer *renderer, char *text, TTF_Font *font, int x, int y) {
+    SDL_Surface *surface;
+    SDL_Texture *texture;
+    SDL_Rect pos;
+    SDL_Color color = {255, 255, 255};
+    surface = TTF_RenderText_Solid(font, text, color);
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    pos.w = surface->w;
+    pos.h = surface->h;
+    pos.x = x;
+    pos.y = y;
+    SDL_FreeSurface(surface);
+    SDL_RenderCopy(renderer, texture, NULL, &pos);
 }
 
 
@@ -87,6 +103,9 @@ int main(){
     SDL_Texture *tex = NULL;
     SDL_Texture *arrow = NULL;
     SDL_Texture *map = NULL;
+    TTF_Init();
+    TTF_Font *font;
+    font = TTF_OpenFont("code610.ttf", 16);
     init_players();
     window = SDL_CreateWindow(
             "game",
