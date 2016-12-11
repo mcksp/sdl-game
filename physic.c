@@ -70,9 +70,11 @@ void move_player(struct Player *player) {
     int y_movement = 0;
     if (player->left) {
         x_movement -= STEP;
+        player->face = -1;
     }
     if (player->right) {
         x_movement += STEP;
+        player->face = 1;
     }
     if (player->up) {
         if (player->can_jump) {
