@@ -18,6 +18,6 @@
 
 void prepare_client(int *sock, struct sockaddr_in *client_addr);
 void send_to_server(int sock, struct sockaddr_in serv_addr, int16_t id, float x, float y, int16_t shoot);
-void client_listen(int sock, int *id, int *x, int *y);
+void client_listen(int sock, int *id, int *x, int *y, int16_t *bullet_array);
 
 #endif

@@ -69,7 +69,7 @@ void move_bullets(struct node *bullets) {
     struct Bullet *b;
     while (next != NULL) {
         b = (struct Bullet*) next->data;
-        b->position.x += b->face;
+        b->position.x += STEP * b->face;
         next = next->next;
     }
 }

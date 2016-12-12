@@ -15,6 +15,8 @@
 struct Player players[MAX_PLAYERS];
 int number_of_players = 0;
 int16_t my_id = -1;
+int16_t bullets_client[256];
+int bullets_number = 0;
 
 SDL_Texture* load_texture(SDL_Renderer *renderer, char *file) {
     SDL_Surface *bitmap = NULL;
@@ -76,9 +78,10 @@ void check_if_its_new_player(int id){
 
 void* client_loop(void *arg) {
     int socket = *((int *) arg);
+    int16_t bullet_array[256];
     while (1) {
         int id, x, y;
-        client_listen(socket, &id, &x, &y);
+        client_listen(socket, &id, &x, &y, bullet_array);
         if (id == -1) {
             receive_new_id(x);
         }
@@ -86,6 +89,10 @@ void* client_loop(void *arg) {
             check_if_its_new_player(id);
             players[id].position.x = x;
             players[id].position.y = y;
+        }
+        if (id == -2) {
+            memcpy(bullets_client, bullet_array, sizeof(int16_t) * 2 * x);
+            bullets_number = x;
         }
         usleep(50);
     }
@@ -150,6 +157,10 @@ int main(){
         usleep(100);
     }
 
+    SDL_Rect bullet_pos;
+    bullet_pos.w = 8;
+    bullet_pos.h = 8;
+
     while (1) {
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
@@ -165,6 +176,11 @@ int main(){
         SDL_RenderCopy(renderer, map, NULL, NULL);
         for (i = 0; i <= number_of_players; i++) {
             SDL_RenderCopy(renderer, tex, NULL, &players[i].position);
+        }
+        for (i = 0; i < bullets_number; i++) {
+            bullet_pos.x = bullets_client[i*2];
+            bullet_pos.y = bullets_client[i*2 + 1];
+            SDL_RenderCopy(renderer, tex, NULL, &bullet_pos);
         }
         SDL_RenderPresent(renderer);
     }

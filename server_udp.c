@@ -81,6 +81,7 @@ int get_bullet_array(struct node *list, int16_t **array) {
     while (temp != NULL && i < n) {
         (*array)[1 + (i * 2)] = ((struct Bullet*) temp->data)->position.x;
         (*array)[2 + (i * 2)] = ((struct Bullet*) temp->data)->position.y;
+        //printf("%d %d (*array)\n", (*array)[1 + (i * 2)], (*array)[2 + (i * 2)]);  
         i++;
         temp = temp->next;
     }
@@ -104,6 +105,9 @@ void* server_send_loop(void *arg) {
                     send_data(socket, clients_addresses[i], tab, 3);
                 }
                 usleep(200);
+            }
+            if (bullets_n > 0) {
+                send_data(socket, clients_addresses[i], bullet_array, 1 + (bullets_n * 2));
             }
             usleep(200);
         }
