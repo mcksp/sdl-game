@@ -42,6 +42,19 @@ void decrement_abs(int *a) {
     *a -= sign(*a);
 }
 
+int check_collisions(SDL_Rect *rect) {
+    if (map[rect->y/TILE_SIZE][rect->x/TILE_SIZE] ||
+            map[(rect->y + rect->h)/TILE_SIZE][rect->x/TILE_SIZE] ||
+            map[(rect->y)/TILE_SIZE][(rect->x + rect->w)/TILE_SIZE] ||
+            map[(rect->y + rect->h)/TILE_SIZE][(rect->x + rect->w)/TILE_SIZE] ||
+            rect->x <= 0 || (rect->x + rect->w >= 640)) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+
 int move_and_check_collisions(SDL_Rect *position, int axis, int mov) {
     SDL_Rect temp = *position;
 
@@ -53,10 +66,7 @@ int move_and_check_collisions(SDL_Rect *position, int axis, int mov) {
         temp.y += sign(mov);
     }
 
-    if (map[temp.y/TILE_SIZE][temp.x/TILE_SIZE] ||
-            map[(temp.y + temp.h)/TILE_SIZE][temp.x/TILE_SIZE] ||
-            map[(temp.y)/TILE_SIZE][(temp.x + temp.w)/TILE_SIZE] ||
-            map[(temp.y + temp.h)/TILE_SIZE][(temp.x + temp.w)/TILE_SIZE]) {
+    if (check_collisions(&temp)) {
         return 0;
     } else {
         *position = temp;
@@ -64,13 +74,19 @@ int move_and_check_collisions(SDL_Rect *position, int axis, int mov) {
     }
 }
  
-void move_bullets(struct node *bullets) {
-    struct node *next = bullets;
+void move_bullets(struct node **bullets) {
+    struct node *next = *bullets;
     struct Bullet *b;
+    int i = 0;
     while (next != NULL) {
         b = (struct Bullet*) next->data;
         b->position.x += STEP * b->face;
         next = next->next;
+        if (check_collisions(&b->position)) {
+            erase_element(bullets, i);
+        } else {
+            i++;
+        }
     }
 }
 

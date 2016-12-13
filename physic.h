@@ -7,6 +7,6 @@
 
 void move_player(struct Player *player); 
 SDL_Texture* get_map_texture(SDL_Renderer *renderer);
-void move_bullets(struct node *bullets);
+void move_bullets(struct node **bullets);
 
 #endif

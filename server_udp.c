@@ -47,10 +47,11 @@ void* server_receive_loop(void *arg) {
             players_server[client_pos].position.x = tab[1];
             players_server[client_pos].position.y = tab[2];
             if (players_server[client_pos].shoot == 0 && tab[3] != 0) {
-                printf("%d shoot %d\n", tab[0], tab[3]);
                 struct Bullet temp;
                 temp.position.x = tab[1];
                 temp.position.y = tab[2];
+                temp.position.w = 8;
+                temp.position.h = 8;
                 temp.face = tab[3];
                 push_element(&bullets_server, &temp, sizeof(struct Bullet));
             }
@@ -81,7 +82,6 @@ int get_bullet_array(struct node *list, int16_t **array) {
     while (temp != NULL && i < n) {
         (*array)[1 + (i * 2)] = ((struct Bullet*) temp->data)->position.x;
         (*array)[2 + (i * 2)] = ((struct Bullet*) temp->data)->position.y;
-        //printf("%d %d (*array)\n", (*array)[1 + (i * 2)], (*array)[2 + (i * 2)]);  
         i++;
         temp = temp->next;
     }
@@ -93,7 +93,7 @@ void* server_send_loop(void *arg) {
     int16_t tab[3];
     while (1) {
         int i, j;
-        move_bullets(bullets_server);
+        move_bullets(&bullets_server);
         int16_t *bullet_array = NULL;
         int bullets_n = get_bullet_array(bullets_server, &bullet_array);
         for (i = 0; i < number_of_connected_clients; i++) {
@@ -106,9 +106,7 @@ void* server_send_loop(void *arg) {
                 }
                 usleep(200);
             }
-            if (bullets_n > 0) {
-                send_data(socket, clients_addresses[i], bullet_array, 1 + (bullets_n * 2));
-            }
+            send_data(socket, clients_addresses[i], bullet_array, 1 + (bullets_n * 2));
             usleep(200);
         }
         free(bullet_array);
