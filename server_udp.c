@@ -33,13 +33,20 @@ void send_data(int sock, struct sockaddr_in client, int16_t data[], int size) {
     sendto(sock, data, sizeof(int16_t) * size, 0, (struct sockaddr*)&client, addr_size);
 }
 
+void init_players_tab() {
+    int i;
+    for (i = 0; i < MAX_PLAYERS; i++) {
+        players_server[i].position.w = 16;
+        players_server[i].position.h = 16;
+    }
+}
 
 void* server_receive_loop(void *arg) {
     int socket = *((int *) arg);
     int client_pos = 0;
     struct sockaddr_in client_addr;
     int16_t tab[4];
-
+    init_players_tab();
     while (1) {
         client_addr = receive_data(socket, tab);
         client_pos = addr_pos_in_tab(client_addr, clients_addresses, number_of_connected_clients);
@@ -49,10 +56,15 @@ void* server_receive_loop(void *arg) {
             if (players_server[client_pos].shoot == 0 && tab[3] != 0) {
                 struct Bullet temp;
                 temp.position.x = tab[1];
-                temp.position.y = tab[2];
+                temp.position.y = tab[2] + 4;
                 temp.position.w = 8;
                 temp.position.h = 8;
                 temp.face = tab[3];
+                if (temp.face == 1) {
+                    temp.position.x += (16 + 1);
+                } else {
+                    temp.position.x -= (8 + 1);
+                }
                 push_element(&bullets_server, &temp, sizeof(struct Bullet));
             }
             players_server[client_pos].shoot = tab[3]; 
@@ -94,6 +106,9 @@ void* server_send_loop(void *arg) {
     while (1) {
         int i, j;
         move_bullets(&bullets_server);
+        for (i = 0; i < number_of_connected_clients; i++) {
+            check_if_player_dies(&players_server[i], &bullets_server);
+        }
         int16_t *bullet_array = NULL;
         int bullets_n = get_bullet_array(bullets_server, &bullet_array);
         for (i = 0; i < number_of_connected_clients; i++) {

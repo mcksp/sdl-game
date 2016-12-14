@@ -76,11 +76,11 @@ int move_and_check_collisions(SDL_Rect *position, int axis, int mov) {
  
 void move_bullets(struct node **bullets) {
     struct node *next = *bullets;
-    struct Bullet *b;
+    struct Bullet *b = NULL;
     int i = 0;
     while (next != NULL) {
         b = (struct Bullet*) next->data;
-        b->position.x += STEP * b->face;
+        b->position.x += STEP * b->face * 1;
         next = next->next;
         if (check_collisions(&b->position)) {
             erase_element(bullets, i);
@@ -89,6 +89,28 @@ void move_bullets(struct node **bullets) {
         }
     }
 }
+
+int check_if_player_dies(struct Player *player, struct node **bullets) {
+    struct node *next = *bullets;
+    struct SDL_Rect b; 
+    struct SDL_Rect p = player->position;
+    int i = 0;
+    while (next != NULL) {
+        b = ((struct Bullet*) next->data)->position;
+        if (p.x < (b.x + b.w) &&
+                (p.x + p.w) > b.x &&
+                p.y < (b.y + b.h) &&
+                (p.y + p.h) > b.y) {
+            erase_element(bullets, i);
+            return 1;
+        }
+        next = next->next;
+        i++;
+    }
+    return 0;
+}
+
+
 
 void move_player(struct Player *player) {
     int x_movement = 0;
