@@ -109,7 +109,7 @@ int main(){
     SDL_Renderer *renderer;
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Texture *tex = NULL;
-    SDL_Texture *arrow = NULL;
+    SDL_Texture *bullet = NULL;
     SDL_Texture *map = NULL;
     TTF_Init();
     TTF_Font *font;
@@ -139,7 +139,7 @@ int main(){
     }
     map = get_map_texture(renderer);
     tex = load_texture(renderer, "xd.bmp");
-    arrow = load_texture(renderer, "arrow.bmp");
+    bullet = load_texture(renderer, "bullet.bmp");
     int i;
     printf("[s]erver or [c]lient?\n");
     //scanf("%c", &menu);
@@ -180,7 +180,7 @@ int main(){
         for (i = 0; i < bullets_number; i++) {
             bullet_pos.x = bullets_client[i*2];
             bullet_pos.y = bullets_client[i*2 + 1];
-            SDL_RenderCopy(renderer, tex, NULL, &bullet_pos);
+            SDL_RenderCopy(renderer, bullet, NULL, &bullet_pos);
         }
         SDL_RenderPresent(renderer);
     }
@@ -192,7 +192,7 @@ int main(){
     pthread_cancel(thread_id_server);
     pthread_cancel(thread_id_server_send);
     SDL_DestroyTexture(tex);
-    SDL_DestroyTexture(arrow);
+    SDL_DestroyTexture(bullet);
     SDL_DestroyTexture(map);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
