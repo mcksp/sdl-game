@@ -20,3 +20,4 @@ game
 *.ttf
 *.out
 tags
+.vscode/
