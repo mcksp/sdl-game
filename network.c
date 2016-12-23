@@ -1,6 +1,5 @@
 #include "network.h"
-#define TRUE 1
-#define FALSE 0
+#include "constans.h"
 
 struct sockaddr_in server_sock_addr() {
     struct sockaddr_in serv_addr;
@@ -35,56 +34,56 @@ int compare_addr(struct sockaddr_in *a, struct sockaddr_in *b) {
     if (a->sin_port == b->sin_port &&
             a->sin_family == b->sin_family &&
             a->sin_addr.s_addr == b->sin_addr.s_addr) {
-        return 1;
+        return true;
     } else {
-        return 0;
+        return false;
     }
 }
 
 int16_t key_state_from_player(struct Player *player) {
     int16_t key_state = 0;
     if (player->left_key) {
-        key_state = key_state | 0x01;
+        key_state = key_state | LEFT_KEY;
     }
     if (player->right_key) {
-        key_state = key_state | 0x02;
+        key_state = key_state | RIGHT_KEY;
     }
     if (player->up_key) {
-        key_state = key_state | 0x04;
+        key_state = key_state | UP_KEY;
     }
     if (player->down_key) {
-        key_state = key_state | 0x08;
+        key_state = key_state | DOWN_KEY;
     }
     if (player->attack_key) {
-        key_state = key_state | 0x10;
+        key_state = key_state | ATTACK_KEY;
     }
     return key_state;
 }
 
 void player_from_key_state(struct Player *player, int16_t key_state) {
-    if (key_state & 0x01) {
-        player->left_key = TRUE;
+    if (key_state & LEFT_KEY) {
+        player->left_key = true;
     } else {
-        player->left_key = FALSE;
+        player->left_key = false;
     }
-    if (key_state & 0x02) {
-        player->right_key = TRUE;
+    if (key_state & RIGHT_KEY) {
+        player->right_key = true;
     } else {
-        player->right_key = FALSE;
+        player->right_key = false;
     }
-    if (key_state & 0x04) {
-        player->up_key = TRUE;
+    if (key_state & UP_KEY) {
+        player->up_key = true;
     } else {
-        player->up_key = FALSE;
+        player->up_key = false;
     }
-    if (key_state & 0x08) {
-        player->down_key = TRUE;
+    if (key_state & DOWN_KEY) {
+        player->down_key = true;
     } else {
-        player->down_key = FALSE;
+        player->down_key = false;
     }
-    if (key_state & 0x10) {
-        player->attack_key = TRUE;
+    if (key_state & ATTACK_KEY) {
+        player->attack_key = true;
     } else {
-        player->attack_key = FALSE;
+        player->attack_key = false;
     }
 }

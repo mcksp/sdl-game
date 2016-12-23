@@ -1,15 +1,5 @@
 #include "physic.h"
-
-#define TILE_SIZE 32
-#define STEP 4
-#define GRAVITY 1
-#define X_AXIS 1
-#define Y_AXIS 0
-
-struct point {
-    int x;
-    int y;
-};
+#include "constans.h"
 
 int map[15][20] = {
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -47,10 +37,10 @@ int check_collisions(SDL_Rect *rect) {
             map[(rect->y + rect->h)/TILE_SIZE][rect->x/TILE_SIZE] ||
             map[(rect->y)/TILE_SIZE][(rect->x + rect->w)/TILE_SIZE] ||
             map[(rect->y + rect->h)/TILE_SIZE][(rect->x + rect->w)/TILE_SIZE] ||
-            rect->x <= 0 || (rect->x + rect->w >= 640)) {
-        return 1;
+            rect->x <= 0 || (rect->x + rect->w >= SCREEN_WIDTH)) {
+        return true;
     } else {
-        return 0;
+        return false;
     }
 }
 
@@ -80,7 +70,7 @@ void move_bullets(struct node **bullets) {
     int i = 0;
     while (next != NULL) {
         b = (struct Bullet*) next->data;
-        b->position.x += STEP * b->face * 1;
+        b->position.x += PLAYER_SPEED * b->face * 1;
         next = next->next;
         if (check_collisions(&b->position)) {
             erase_element(bullets, i);
@@ -102,12 +92,12 @@ int check_if_player_dies(struct Player *player, struct node **bullets) {
                 p.y < (b.y + b.h) &&
                 (p.y + p.h) > b.y) {
             erase_element(bullets, i);
-            return 1;
+            return true;
         }
         next = next->next;
         i++;
     }
-    return 0;
+    return false;
 }
 
 
@@ -116,22 +106,22 @@ void move_player(struct Player *player) {
     int x_movement = 0;
     int y_movement = 0;
     if (player->left) {
-        x_movement -= STEP;
+        x_movement -= PLAYER_SPEED;
         player->face = -1;
     }
     if (player->right) {
-        x_movement += STEP;
+        x_movement += PLAYER_SPEED;
         player->face = 1;
     }
     if (player->up) {
         if (player->can_jump) {
-            player->can_jump = 0;
-            player->y_speed = -25;
+            player->can_jump = false;
+            player->y_speed = -PLAYER_JUMP_POWER;
         }
     }
     
     y_movement = player->y_speed / 3;
-    if (player->y_speed < 25) {
+    if (player->y_speed < MAX_VERTICAL_SPEED) {
         player->y_speed += GRAVITY;
     }
 
@@ -144,10 +134,10 @@ void move_player(struct Player *player) {
 
         if (y_movement != 0 && move_and_check_collisions(&player->position, Y_AXIS, y_movement)) {
             decrement_abs(&y_movement);
-            player->can_jump = 0;
+            player->can_jump = false;
         } else {
             if(y_movement > 0) {
-                player->can_jump = 1;
+                player->can_jump = true;
                 player->y_speed = 0;
             }
             if(y_movement < 0) {
@@ -162,16 +152,16 @@ SDL_Texture* get_map_texture(SDL_Renderer *renderer) {
     SDL_Surface *bitmap = NULL;
     SDL_Texture *map_texture;
     SDL_Rect rect;
-    rect.w = 32;
-    rect.h = 32;
+    rect.w = TILE_SIZE;
+    rect.h = TILE_SIZE;
     bitmap = SDL_LoadBMP("tile.bmp");
     SDL_Texture *tex = NULL;
     tex = SDL_CreateTextureFromSurface(renderer, bitmap);
-    map_texture = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 480);
+    map_texture = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
     SDL_SetRenderTarget(renderer, map_texture);
     int i, j;
-    for (i = 0; i < 480 / TILE_SIZE; i++) {
-        for (j = 0; j < 640 / TILE_SIZE; j++) {
+    for (i = 0; i < SCREEN_HEIGHT / TILE_SIZE; i++) {
+        for (j = 0; j < SCREEN_WIDTH / TILE_SIZE; j++) {
             if (map[i][j]) {
                 rect.x = TILE_SIZE * j;
                 rect.y = TILE_SIZE * i;

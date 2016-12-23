@@ -9,8 +9,7 @@
 #include "server_udp.h"
 #include "network.h"
 #include "physic.h"
-
-#define MAX_PLAYERS 10
+#include "constans.h"
 
 struct Player players[MAX_PLAYERS];
 int number_of_players = 0;
@@ -48,17 +47,17 @@ void init_players() {
     for (i = 0; i < MAX_PLAYERS; i++) {
         players[i].position.x = 10;
         players[i].position.y = 10;
-        players[i].position.w = 16;
-        players[i].position.h = 16;
+        players[i].position.w = PLAYER_WIDTH;
+        players[i].position.h = PLAYER_HEIGHT;
         players[i].left_key = SDLK_LEFT;
         players[i].right_key = SDLK_RIGHT;
         players[i].up_key = SDLK_UP;
         players[i].down_key = SDLK_DOWN;
         players[i].attack_key = SDLK_z;
         players[i].face = 1;
-        players[i].shoot = 0;
+        players[i].shoot = false;
         players[i].y_speed = 0;
-        players[i].can_jump = 0;
+        players[i].can_jump = false;
     }
 }
 
@@ -158,8 +157,8 @@ int main(){
     }
 
     SDL_Rect bullet_pos;
-    bullet_pos.w = 8;
-    bullet_pos.h = 8;
+    bullet_pos.w = BULLET_HEIGHT;
+    bullet_pos.h = BULLET_HEIGHT;
 
     while (1) {
         SDL_Event e;

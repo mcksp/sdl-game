@@ -1,5 +1,5 @@
 #include "client_udp.h"
-#define BUF_MAX 256
+#include "constans.h"
 
 void prepare_client(int *sock, struct sockaddr_in *client_addr) {
     if ((*sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {

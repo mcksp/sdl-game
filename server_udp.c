@@ -3,8 +3,7 @@
 #include "objects.h"
 #include "list.h"
 #include "physic.h"
-
-#define MAX_PLAYERS 10
+#include "constans.h"
 
 struct sockaddr_in clients_addresses[MAX_PLAYERS];
 struct Player players_server[MAX_PLAYERS];
@@ -36,8 +35,8 @@ void send_data(int sock, struct sockaddr_in client, int16_t data[], int size) {
 void init_players_tab() {
     int i;
     for (i = 0; i < MAX_PLAYERS; i++) {
-        players_server[i].position.w = 16;
-        players_server[i].position.h = 16;
+        players_server[i].position.w = PLAYER_WIDTH;
+        players_server[i].position.h = PLAYER_HEIGHT;
     }
 }
 
@@ -57,8 +56,8 @@ void* server_receive_loop(void *arg) {
                 struct Bullet temp;
                 temp.position.x = tab[1];
                 temp.position.y = tab[2] + 4;
-                temp.position.w = 8;
-                temp.position.h = 8;
+                temp.position.w = BULLET_WIDTH;
+                temp.position.h = BULLET_HEIGHT;
                 temp.face = tab[3];
                 if (temp.face == 1) {
                     temp.position.x += (16 + 1);

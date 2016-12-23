@@ -1,22 +1,20 @@
 #include "objects.h"
 #include "physic.h"
+#include "constans.h"
 
-#define TRUE 1
-#define FALSE 0
-#define BULLET_SIZE 8
 
 void resolve_player_key_down(int key, struct Player* player) {
     if (key == player->left_key) {
-        player->left = TRUE;
+        player->left = true;
     }
     if (key == player->right_key) {
-        player->right = TRUE;
+        player->right = true;
     }
     if (key == player->up_key) {
-        player->up = TRUE;
+        player->up = true;
     }
     if (key == player->down_key) {
-        player->down = TRUE;
+        player->down = true;
     }
     if (key == player->attack_key) {
         player->shoot = player->face;
@@ -25,19 +23,19 @@ void resolve_player_key_down(int key, struct Player* player) {
 
 void resolve_player_key_up(int key, struct Player* player) {
     if (key == player->left_key) {
-        player->left = FALSE;
+        player->left = false;
     }
     if (key == player->right_key) {
-        player->right = FALSE;
+        player->right = false;
     }
     if (key == player->up_key) {
-        player->up = FALSE;
+        player->up = false;
     }
     if (key == player->down_key) {
-        player->down = FALSE;
+        player->down = false;
     }
     if (key == player->attack_key) {
-        player->shoot = FALSE;
+        player->shoot = false;
     }
 }
 
@@ -60,8 +58,8 @@ struct Bullet init_bullet(int x, int y, int face) {
     struct Bullet b;
     b.position.x = x;
     b.position.y = y;
-    b.position.w = BULLET_SIZE;
-    b.position.h = BULLET_SIZE;
+    b.position.w = BULLET_WIDTH;
+    b.position.h = BULLET_HEIGHT;
     b.face = face;
     return b;
 }
