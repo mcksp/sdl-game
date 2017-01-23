@@ -152,7 +152,7 @@ int main(){
     pthread_create(&thread_id_client, NULL, client_loop, &sock_client);
 
     while (my_id < 0) {
-        send_to_server(sock_client, server_addr, my_id, 0, 0, 0);
+        send_to_server(sock_client, server_addr, my_id, 0);
         usleep(100);
     }
 
@@ -168,8 +168,7 @@ int main(){
             }
             resolve_keyboard(e, &players[my_id]);
         }
-        move_player(&players[my_id]);
-        send_to_server(sock_client, server_addr, my_id, players[my_id].position.x, players[my_id].position.y, players[my_id].shoot);
+        send_to_server(sock_client, server_addr, my_id, key_state_from_player(&players[my_id]));
         usleep(30);
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, map, NULL, NULL);

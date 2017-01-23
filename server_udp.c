@@ -37,6 +37,8 @@ void init_players_tab() {
     for (i = 0; i < MAX_PLAYERS; i++) {
         players_server[i].position.w = PLAYER_WIDTH;
         players_server[i].position.h = PLAYER_HEIGHT;
+        players_server[i].position.x = 10;
+        players_server[i].position.y = 10;
     }
 }
 
@@ -50,9 +52,9 @@ void* server_receive_loop(void *arg) {
         client_addr = receive_data(socket, tab);
         client_pos = addr_pos_in_tab(client_addr, clients_addresses, number_of_connected_clients);
         if (its_an_old_client(client_pos)) {
-            players_server[client_pos].position.x = tab[1];
-            players_server[client_pos].position.y = tab[2];
-            if (players_server[client_pos].shoot == 0 && tab[3] != 0) {
+            int16_t keys = tab[1];
+            player_from_key_state(&players_server[client_pos], keys);
+            /*if (players_server[client_pos].shoot == 0 && tab[3] != 0) {
                 struct Bullet temp;
                 temp.position.x = tab[1];
                 temp.position.y = tab[2] + 4;
@@ -66,7 +68,7 @@ void* server_receive_loop(void *arg) {
                 }
                 push_element(&bullets_server, &temp, sizeof(struct Bullet));
             }
-            players_server[client_pos].shoot = tab[3]; 
+            players_server[client_pos].shoot = tab[3]; */
         }
         if (tab[0] == -1 && client_pos < MAX_PLAYERS) {
             add_adr_to_list(client_pos, &client_addr);
@@ -106,18 +108,17 @@ void* server_send_loop(void *arg) {
         int i, j;
         move_bullets(&bullets_server);
         for (i = 0; i < number_of_connected_clients; i++) {
+            move_player(&players_server[i]);
             check_if_player_dies(&players_server[i], &bullets_server);
         }
         int16_t *bullet_array = NULL;
         int bullets_n = get_bullet_array(bullets_server, &bullet_array);
         for (i = 0; i < number_of_connected_clients; i++) {
             for (j = 0; j < number_of_connected_clients; j++) {
-                if (i != j) {
-                    tab[0] = j;
-                    tab[1] = players_server[j].position.x;
-                    tab[2] = players_server[j].position.y;
-                    send_data(socket, clients_addresses[i], tab, 3);
-                }
+                tab[0] = j;
+                tab[1] = players_server[j].position.x;
+                tab[2] = players_server[j].position.y;
+                send_data(socket, clients_addresses[i], tab, 3);
                 usleep(200);
             }
             send_data(socket, clients_addresses[i], bullet_array, 1 + (bullets_n * 2));

@@ -42,19 +42,19 @@ int compare_addr(struct sockaddr_in *a, struct sockaddr_in *b) {
 
 int16_t key_state_from_player(struct Player *player) {
     int16_t key_state = 0;
-    if (player->left_key) {
+    if (player->left) {
         key_state = key_state | LEFT_KEY;
     }
-    if (player->right_key) {
+    if (player->right) {
         key_state = key_state | RIGHT_KEY;
     }
-    if (player->up_key) {
+    if (player->up) {
         key_state = key_state | UP_KEY;
     }
-    if (player->down_key) {
+    if (player->down) {
         key_state = key_state | DOWN_KEY;
     }
-    if (player->attack_key) {
+    if (player->shoot) {
         key_state = key_state | ATTACK_KEY;
     }
     return key_state;
@@ -62,28 +62,28 @@ int16_t key_state_from_player(struct Player *player) {
 
 void player_from_key_state(struct Player *player, int16_t key_state) {
     if (key_state & LEFT_KEY) {
-        player->left_key = true;
+        player->left = true;
     } else {
-        player->left_key = false;
+        player->left = false;
     }
     if (key_state & RIGHT_KEY) {
-        player->right_key = true;
+        player->right = true;
     } else {
-        player->right_key = false;
+        player->right = false;
     }
     if (key_state & UP_KEY) {
-        player->up_key = true;
+        player->up = true;
     } else {
-        player->up_key = false;
+        player->up = false;
     }
     if (key_state & DOWN_KEY) {
-        player->down_key = true;
+        player->down = true;
     } else {
-        player->down_key = false;
+        player->down = false;
     }
     if (key_state & ATTACK_KEY) {
-        player->attack_key = true;
+        player->shoot = true;
     } else {
-        player->attack_key = false;
+        player->shoot = false;
     }
 }
