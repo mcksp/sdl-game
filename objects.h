@@ -10,11 +10,13 @@ struct Player {
     int can_jump, y_speed;
     int face, shoot, reloading;
     int left_key, right_key, up_key, down_key, attack_key;
+    int kills, deaths;
 };
 
 struct Bullet {
     SDL_Rect position;
     int face;
+    int player_id;
 };
 
 

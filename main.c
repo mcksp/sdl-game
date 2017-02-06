@@ -58,6 +58,9 @@ void init_players() {
         players[i].shoot = false;
         players[i].y_speed = 0;
         players[i].can_jump = false;
+        players[i].reloading = false;
+        players[i].kills = 0;
+        players[i].deaths = 0;
     }
 }
 
@@ -176,6 +179,21 @@ int main(){
         for (i = 0; i <= number_of_players; i++) {
             SDL_RenderCopy(renderer, tex, NULL, &players[i].position);
         }
+
+        disp_text(renderer, "kills", font, 400, 10);
+        for (i = 0; i <= number_of_players; i++) {
+            char kills[10] = {};
+            sprintf(kills, "%d", 2);
+            disp_text(renderer, kills, font, 400, 30 + i * 20);
+        }
+
+        disp_text(renderer, "deaths", font, 460, 10);
+        for (i = 0; i <= number_of_players; i++) {
+            char deaths[10] = {};
+            sprintf(deaths, "%d", 5);
+            disp_text(renderer, deaths, font, 460, 30 + i * 20);
+        }
+
         for (i = 0; i < bullets_number; i++) {
             bullet_pos.x = bullets_client[i*2];
             bullet_pos.y = bullets_client[i*2 + 1];

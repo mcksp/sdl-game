@@ -68,6 +68,7 @@ void* server_receive_loop(void *arg) {
                 } else {
                     temp.position.x -= (8 + 1);
                 }
+                temp.player_id = client_pos;
                 push_element(&bullets_server, &temp, sizeof(struct Bullet));
             }
             players_server[client_pos].reloading = players_server[client_pos].shoot;
@@ -117,6 +118,7 @@ void* server_send_loop(void *arg) {
             if (check_if_player_dies(&players_server[i], &bullets_server)) {
                 players_server[i].position.x = 10;
                 players_server[i].position.y = 10;
+                players_server[i].deaths++;
             }
         }
         int16_t *bullet_array = NULL;
@@ -126,7 +128,9 @@ void* server_send_loop(void *arg) {
                 tab[0] = j;
                 tab[1] = players_server[j].position.x;
                 tab[2] = players_server[j].position.y;
-                send_data(socket, clients_addresses[i], tab, 3);
+                tab[3] = players_server[j].kills;
+                tab[4] = players_server[j].deaths;
+                send_data(socket, clients_addresses[i], tab, 5);
                 usleep(20);
             }
             send_data(socket, clients_addresses[i], bullet_array, 1 + (bullets_n * 2));
