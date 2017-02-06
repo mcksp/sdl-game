@@ -114,7 +114,10 @@ void* server_send_loop(void *arg) {
         move_bullets(&bullets_server);
         for (i = 0; i < number_of_connected_clients; i++) {
             move_player(&players_server[i]);
-            check_if_player_dies(&players_server[i], &bullets_server);
+            if (check_if_player_dies(&players_server[i], &bullets_server)) {
+                players_server[i].position.x = 10;
+                players_server[i].position.y = 10;
+            }
         }
         int16_t *bullet_array = NULL;
         int bullets_n = get_bullet_array(bullets_server, &bullet_array);
