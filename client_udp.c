@@ -23,17 +23,8 @@ void send_to_server(int sock, struct sockaddr_in serv_addr, int16_t id, int16_t 
  
 }
 
-void client_listen(int sock, int *id, int *x, int *y, int16_t *bullet_array){
-    int16_t tab[BUF_MAX];
+int client_listen(int sock, int16_t *tab){
     int length = recvfrom(sock, tab, sizeof(int16_t) * BUF_MAX, 0, NULL, 0);
-    if (length > 0) {
-        *id = tab[0];
-        if (tab[0] != -2) {
-            *x = tab[1];
-            *y = tab[2];
-        } else {
-            memcpy(bullet_array, tab + 1, length - sizeof(int16_t));
-            *x = (length - sizeof(int16_t)) / (sizeof(int16_t) * 2);
-        }
-    }
+    return length;
 }
+

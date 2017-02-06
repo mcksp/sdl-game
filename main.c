@@ -80,21 +80,26 @@ void check_if_its_new_player(int id){
 
 void* client_loop(void *arg) {
     int socket = *((int *) arg);
-    int16_t bullet_array[256];
+    int16_t tab[BUF_MAX];
+    int length;
+    int id, bullets_in_array;
     while (1) {
-        int id, x, y;
-        client_listen(socket, &id, &x, &y, bullet_array);
+        length = client_listen(socket, tab);
+        id = tab[0];
         if (id == -1) {
-            receive_new_id(x);
+            receive_new_id(tab[1]);
         }
         if (id >= 0) {
             check_if_its_new_player(id);
-            players[id].position.x = x;
-            players[id].position.y = y;
+            players[id].position.x = tab[1];
+            players[id].position.y = tab[2];
+            players[id].kills = tab[3];
+            players[id].deaths = tab[4];
         }
         if (id == -2) {
-            memcpy(bullets_client, bullet_array, sizeof(int16_t) * 2 * x);
-            bullets_number = x;
+            bullets_in_array = (length - sizeof(int16_t)) / (sizeof(int16_t) * 2);
+            memcpy(bullets_client, tab + 1, sizeof(int16_t) * 2 * bullets_in_array);
+            bullets_number = bullets_in_array;
         }
         usleep(50);
     }
@@ -183,14 +188,14 @@ int main(){
         disp_text(renderer, "kills", font, 400, 10);
         for (i = 0; i <= number_of_players; i++) {
             char kills[10] = {};
-            sprintf(kills, "%d", 2);
+            sprintf(kills, "%d", players[i].kills);
             disp_text(renderer, kills, font, 400, 30 + i * 20);
         }
 
         disp_text(renderer, "deaths", font, 460, 10);
         for (i = 0; i <= number_of_players; i++) {
             char deaths[10] = {};
-            sprintf(deaths, "%d", 5);
+            sprintf(deaths, "%d", players[i].deaths);
             disp_text(renderer, deaths, font, 460, 30 + i * 20);
         }
 

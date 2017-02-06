@@ -80,7 +80,7 @@ void move_bullets(struct node **bullets) {
     }
 }
 
-int check_if_player_dies(struct Player *player, struct node **bullets) {
+int check_if_player_dies(struct Player *player, struct node **bullets, int *killer) {
     struct node *next = *bullets;
     struct SDL_Rect b; 
     struct SDL_Rect p = player->position;
@@ -91,6 +91,7 @@ int check_if_player_dies(struct Player *player, struct node **bullets) {
                 (p.x + p.w) > b.x &&
                 p.y < (b.y + b.h) &&
                 (p.y + p.h) > b.y) {
+            *killer = ((struct Bullet*) next->data)->player_id;
             erase_element(bullets, i);
             return true;
         }

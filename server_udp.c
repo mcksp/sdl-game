@@ -109,16 +109,18 @@ void* server_send_loop(void *arg) {
     int16_t tab[3];
     struct timeval start, stop;
     double time_interval;
+    int killer;
     while (1) {
         gettimeofday(&start, NULL);
         int i, j;
         move_bullets(&bullets_server);
         for (i = 0; i < number_of_connected_clients; i++) {
             move_player(&players_server[i]);
-            if (check_if_player_dies(&players_server[i], &bullets_server)) {
+            if (check_if_player_dies(&players_server[i], &bullets_server, &killer)) {
                 players_server[i].position.x = 10;
                 players_server[i].position.y = 10;
                 players_server[i].deaths++;
+                players_server[killer].kills++;
             }
         }
         int16_t *bullet_array = NULL;
