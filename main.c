@@ -102,7 +102,7 @@ int main(){
     int sock_server, sock_client;
     server_addr = server_sock_addr();
     client_addr = client_sock_addr();
-    
+
     char menu = 's';
     SDL_Window *window;
     SDL_Renderer *renderer;
@@ -160,6 +160,7 @@ int main(){
     bullet_pos.w = BULLET_HEIGHT;
     bullet_pos.h = BULLET_HEIGHT;
 
+
     while (1) {
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
@@ -182,7 +183,6 @@ int main(){
         }
         SDL_RenderPresent(renderer);
     }
-   
 
     close(sock_client);
     close(sock_server);

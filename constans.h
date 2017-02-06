@@ -5,6 +5,7 @@
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
+#define FRAME_TIME 16666
 #define TILE_SIZE 32
 #define GRAVITY 1
 #define MAX_VERTICAL_SPEED 25

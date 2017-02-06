@@ -4,6 +4,8 @@
 #include "list.h"
 #include "physic.h"
 #include "constans.h"
+#include "time.h"
+#include "sys/time.h"
 
 struct sockaddr_in clients_addresses[MAX_PLAYERS];
 struct Player players_server[MAX_PLAYERS];
@@ -104,7 +106,10 @@ int get_bullet_array(struct node *list, int16_t **array) {
 void* server_send_loop(void *arg) {
     int socket = *((int *) arg);
     int16_t tab[3];
+    struct timeval start, stop;
+    double time_interval;
     while (1) {
+        gettimeofday(&start, NULL);
         int i, j;
         move_bullets(&bullets_server);
         for (i = 0; i < number_of_connected_clients; i++) {
@@ -119,13 +124,18 @@ void* server_send_loop(void *arg) {
                 tab[1] = players_server[j].position.x;
                 tab[2] = players_server[j].position.y;
                 send_data(socket, clients_addresses[i], tab, 3);
-                usleep(200);
+                usleep(20);
             }
             send_data(socket, clients_addresses[i], bullet_array, 1 + (bullets_n * 2));
-            usleep(200);
+            usleep(20);
         }
         free(bullet_array);
-        usleep(10000);
+        gettimeofday(&stop, NULL);
+        time_interval = (double) (stop.tv_usec - start.tv_usec);
+        if ((double) (stop.tv_usec - start.tv_usec) > 0) {
+            time_interval = (double) (stop.tv_usec - start.tv_usec);
+        }
+        usleep(FRAME_TIME - time_interval);
     }
 }
 
