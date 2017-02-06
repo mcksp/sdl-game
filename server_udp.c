@@ -56,13 +56,13 @@ void* server_receive_loop(void *arg) {
         if (its_an_old_client(client_pos)) {
             int16_t keys = tab[1];
             player_from_key_state(&players_server[client_pos], keys);
-            /*if (players_server[client_pos].shoot == 0 && tab[3] != 0) {
+            if(players_server[client_pos].shoot && !players_server[client_pos].reloading) {
                 struct Bullet temp;
-                temp.position.x = tab[1];
-                temp.position.y = tab[2] + 4;
+                temp.position.x = players_server[client_pos].position.x;
+                temp.position.y = players_server[client_pos].position.y;
                 temp.position.w = BULLET_WIDTH;
                 temp.position.h = BULLET_HEIGHT;
-                temp.face = tab[3];
+                temp.face = players_server[client_pos].face;
                 if (temp.face == 1) {
                     temp.position.x += (16 + 1);
                 } else {
@@ -70,7 +70,7 @@ void* server_receive_loop(void *arg) {
                 }
                 push_element(&bullets_server, &temp, sizeof(struct Bullet));
             }
-            players_server[client_pos].shoot = tab[3]; */
+            players_server[client_pos].reloading = players_server[client_pos].shoot;
         }
         if (tab[0] == -1 && client_pos < MAX_PLAYERS) {
             add_adr_to_list(client_pos, &client_addr);
