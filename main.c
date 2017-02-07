@@ -95,10 +95,46 @@ void server_or_client(SDL_Renderer *renderer, char *menu, TTF_Font *font){
         }
         usleep(200);
         SDL_RenderClear(renderer);
-        disp_text(renderer, "[s]erver or [c]lient?", font, 200, 200);
+        disp_text(renderer, "[s]erver or [c]lient?", font, 240, 200);
         SDL_RenderPresent(renderer);
     }
 }
+
+void ask_for_ip(SDL_Renderer *renderer, TTF_Font *font) {
+    char ip[16] = " ";
+    SDL_Event e;
+    int position = 0;
+    int ok = false;
+    while (!ok) {
+        if (SDL_PollEvent(&e)) {
+            if (e.type == SDL_KEYDOWN) {
+                if ((e.key.keysym.sym >= SDLK_0 && e.key.keysym.sym <= SDLK_9) || e.key.keysym.sym == SDLK_PERIOD) {
+                    ip[position] = e.key.keysym.sym;
+                    position++;
+                    if (position > 14) {
+                        position = 14;
+                    }
+                }
+                if (e.key.keysym.sym == SDLK_BACKSPACE) {
+                    position--;
+                    ip[position] = ' ';
+                    if (position < 0) {
+                        position = 0;
+                    }
+                }
+                if (e.key.keysym.sym == SDLK_RETURN) {
+                    ok = true;
+                }
+            }
+        }
+        usleep(200);
+        SDL_RenderClear(renderer);
+        disp_text(renderer, "ip addres", font, 240, 200);
+        disp_text(renderer, ip, font, 240, 230);
+        SDL_RenderPresent(renderer);
+    }
+}
+
 
 
 
@@ -172,8 +208,10 @@ int main(){
     tex = load_texture(renderer, "xd.bmp");
     bullet = load_texture(renderer, "bullet.bmp");
     int i;
-    printf("[s]erver or [c]lient?\n");
     server_or_client(renderer, &menu, font);
+    if (menu == 'c') {
+        ask_for_ip(renderer, font);
+    }
     pthread_t thread_id_server, thread_id_client, thread_id_server_send;
     if(menu == 's') {
         prepare_server(&sock_server, &server_addr);
