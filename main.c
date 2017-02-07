@@ -78,6 +78,30 @@ void check_if_its_new_player(int id){
 }
 
 
+void server_or_client(SDL_Renderer *renderer, char *menu, TTF_Font *font){
+    SDL_Event e;
+    int pressed = false;
+    while (!pressed) {
+        if (SDL_PollEvent(&e)) {
+            if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.sym == SDLK_c) {
+                    *menu = 'c';
+                    pressed = true;
+                } else if (e.key.keysym.sym == SDLK_s) {
+                    *menu = 's';
+                    pressed = true;
+                }
+            }
+        }
+        usleep(200);
+        SDL_RenderClear(renderer);
+        disp_text(renderer, "[s]erver or [c]lient?", font, 200, 200);
+        SDL_RenderPresent(renderer);
+    }
+}
+
+
+
 void* client_loop(void *arg) {
     int socket = *((int *) arg);
     int16_t tab[BUF_MAX];
@@ -120,7 +144,7 @@ int main(){
     SDL_Texture *map = NULL;
     TTF_Init();
     TTF_Font *font;
-    font = TTF_OpenFont("code610.ttf", 16);
+    font = TTF_OpenFont("m5x7.ttf", 24);
     init_players();
     window = SDL_CreateWindow(
             "game",
@@ -149,7 +173,7 @@ int main(){
     bullet = load_texture(renderer, "bullet.bmp");
     int i;
     printf("[s]erver or [c]lient?\n");
-    //scanf("%c", &menu);
+    server_or_client(renderer, &menu, font);
     pthread_t thread_id_server, thread_id_client, thread_id_server_send;
     if(menu == 's') {
         prepare_server(&sock_server, &server_addr);
@@ -169,8 +193,9 @@ int main(){
     bullet_pos.h = BULLET_HEIGHT;
 
 
+    SDL_Event e;
+
     while (1) {
-        SDL_Event e;
         if (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 break;
