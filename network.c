@@ -1,11 +1,15 @@
 #include "network.h"
 #include "constans.h"
 
-struct sockaddr_in server_sock_addr() {
+struct sockaddr_in server_sock_addr(char *ip) {
     struct sockaddr_in serv_addr;
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = htonl(0x7f000001);
+    if (ip == NULL) {
+        serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    } else {
+        inet_aton(ip, &serv_addr.sin_addr);
+    }
     serv_addr.sin_port = htons(1234);
     return serv_addr;
 }

@@ -100,8 +100,8 @@ void server_or_client(SDL_Renderer *renderer, char *menu, TTF_Font *font){
     }
 }
 
-void ask_for_ip(SDL_Renderer *renderer, TTF_Font *font) {
-    char ip[16] = " ";
+void ask_for_ip(SDL_Renderer *renderer, TTF_Font *font, char *ip) {
+    memset(ip, ' ', 15);
     SDL_Event e;
     int position = 0;
     int ok = false;
@@ -109,20 +109,21 @@ void ask_for_ip(SDL_Renderer *renderer, TTF_Font *font) {
         if (SDL_PollEvent(&e)) {
             if (e.type == SDL_KEYDOWN) {
                 if ((e.key.keysym.sym >= SDLK_0 && e.key.keysym.sym <= SDLK_9) || e.key.keysym.sym == SDLK_PERIOD) {
-                    ip[position] = e.key.keysym.sym;
-                    position++;
                     if (position > 14) {
                         position = 14;
                     }
+                    ip[position] = e.key.keysym.sym;
+                    position++;
                 }
                 if (e.key.keysym.sym == SDLK_BACKSPACE) {
                     position--;
-                    ip[position] = ' ';
                     if (position < 0) {
                         position = 0;
                     }
+                    ip[position] = ' ';
                 }
                 if (e.key.keysym.sym == SDLK_RETURN) {
+                    ip[position] = 0;
                     ok = true;
                 }
             }
@@ -168,8 +169,7 @@ void* client_loop(void *arg) {
 int main(){
     struct sockaddr_in server_addr, client_addr;
     int sock_server, sock_client;
-    server_addr = server_sock_addr();
-    client_addr = client_sock_addr();
+    char *server_ip_addr = NULL;
 
     char menu = 's';
     SDL_Window *window;
@@ -210,9 +210,12 @@ int main(){
     int i;
     server_or_client(renderer, &menu, font);
     if (menu == 'c') {
-        ask_for_ip(renderer, font);
+        server_ip_addr = malloc(16 * sizeof(char));
+        ask_for_ip(renderer, font, server_ip_addr);
     }
     pthread_t thread_id_server, thread_id_client, thread_id_server_send;
+    server_addr = server_sock_addr(server_ip_addr);
+    client_addr = client_sock_addr();
     if(menu == 's') {
         prepare_server(&sock_server, &server_addr);
         pthread_create(&thread_id_server, NULL, server_receive_loop, &sock_server);
