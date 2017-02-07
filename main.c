@@ -180,7 +180,7 @@ int main(){
     SDL_Texture *map = NULL;
     TTF_Init();
     TTF_Font *font;
-    font = TTF_OpenFont("m5x7.ttf", 24);
+    font = TTF_OpenFont("resources/m5x7.ttf", 24);
     init_players();
     window = SDL_CreateWindow(
             "game",
@@ -205,8 +205,8 @@ int main(){
         return 1;
     }
     map = get_map_texture(renderer);
-    tex = load_texture(renderer, "player.bmp");
-    bullet = load_texture(renderer, "bullet.bmp");
+    tex = load_texture(renderer, "resources/player.bmp");
+    bullet = load_texture(renderer, "resources/bullet.bmp");
     int i;
     server_or_client(renderer, &menu, font);
     if (menu == 'c') {
