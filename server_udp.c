@@ -39,8 +39,8 @@ void init_players_tab() {
     for (i = 0; i < MAX_PLAYERS; i++) {
         players_server[i].position.w = PLAYER_WIDTH;
         players_server[i].position.h = PLAYER_HEIGHT;
-        players_server[i].position.x = 10;
-        players_server[i].position.y = 10;
+        players_server[i].position.x = SPAWN_X;
+        players_server[i].position.y = SPAWN_Y;
     }
 }
 
@@ -64,9 +64,9 @@ void* server_receive_loop(void *arg) {
                 temp.position.h = BULLET_HEIGHT;
                 temp.face = players_server[client_pos].face;
                 if (temp.face == 1) {
-                    temp.position.x += (16 + 1);
+                    temp.position.x += PLAYER_WIDTH;
                 } else {
-                    temp.position.x -= (8 + 1);
+                    temp.position.x -= BULLET_WIDTH;
                 }
                 temp.player_id = client_pos;
                 push_element(&bullets_server, &temp, sizeof(struct Bullet));

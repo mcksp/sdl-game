@@ -45,8 +45,8 @@ void disp_text(SDL_Renderer *renderer, char *text, TTF_Font *font, int x, int y)
 void init_players() {
     int i;
     for (i = 0; i < MAX_PLAYERS; i++) {
-        players[i].position.x = 10;
-        players[i].position.y = 10;
+        players[i].position.x = SPAWN_X;
+        players[i].position.y = SPAWN_Y;
         players[i].position.w = PLAYER_WIDTH;
         players[i].position.h = PLAYER_HEIGHT;
         players[i].left_key = SDLK_LEFT;
