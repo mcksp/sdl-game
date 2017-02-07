@@ -205,7 +205,7 @@ int main(){
         return 1;
     }
     map = get_map_texture(renderer);
-    tex = load_texture(renderer, "xd.bmp");
+    tex = load_texture(renderer, "player.bmp");
     bullet = load_texture(renderer, "bullet.bmp");
     int i;
     server_or_client(renderer, &menu, font);
